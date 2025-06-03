@@ -50,3 +50,9 @@ pip install -r requirements.txt
 ```bash
 python game.py
 ```
+
+### Map Generation
+
+You can generate a map directly from `map_gen/map_gen.py`, which can be run as a standalone application
+
+![3-Terrain Screenshot](./assets/readme/terrain_screenshot.png)
