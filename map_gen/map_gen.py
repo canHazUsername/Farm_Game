@@ -17,8 +17,8 @@ WINDOW_WIDTH = 1024
 WINDOW_HEIGHT = 768
 
 # Map size in hex tiles
-MAP_COLS = 30  # columns
-MAP_ROWS = 30  # rows
+MAP_COLS = 50  # columns
+MAP_ROWS = 50  # rows
 
 # Voronoi seed count affects biome regions
 VORONOI_SEED_COUNT = 60
@@ -41,7 +41,7 @@ np.random.seed(RANDOM_SEED)
 NOISE_PARAMS['base'] = RANDOM_SEED
 
 # Terrain thresholds define biome zones
-TERRAIN_THRESHOLDS = [0.2, 0.35, 0.55, 0.75]
+TERRAIN_THRESHOLDS = [0.3, 0.4, 0.55, 0.7]
 
 # RGB colors for terrain types
 TERRAIN_COLORS = [
