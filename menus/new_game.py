@@ -1,7 +1,11 @@
 import pygame
 import os
+import time
 from utils.background import load_scaled_background
 from ui.menus.button import Button
+from map_gen import map_generator
+from game.state import GameState
+from game.render import RenderGameScreen
 
 
 class NewGameMenu:
@@ -26,29 +30,48 @@ class NewGameMenu:
         screen_width, screen_height = self.screen.get_size()
         start_y, y_offset = 200, 100
 
-        # Map size buttons
         for i, size in enumerate(self.map_sizes):
             x = (screen_width - button_width) // 2
             y = start_y + i * y_offset
             rect = pygame.Rect(x, y, button_width, button_height)
-            self.buttons.append(Button(rect, f"{size}x{size}", self.font, lambda s=size: self.select_size(s), selected=(self.selected_size == size)))
+            self.buttons.append(Button(
+                rect, 
+                f"{size}x{size}", 
+                self.font, 
+                lambda s=size: self.select_size(s),
+                selected=(self.selected_size == size)
+            ))
 
-        # Start Game button
         y = start_y + len(self.map_sizes) * y_offset
         start_rect = pygame.Rect((screen_width - button_width) // 2, y, button_width, button_height)
         self.buttons.append(Button(start_rect, "Start Game", self.font, self.start_game))
 
-        # Back button
         back_rect = pygame.Rect(20, 20, 150, 50)
         self.buttons.append(Button(back_rect, "Back", self.font, self.back_to_main))
 
     def select_size(self, size):
         self.selected_size = size
-        self.create_buttons()  # update button highlights
+        self.create_buttons()
 
     def start_game(self):
-        print(f"Starting game with map size {self.selected_size}x{self.selected_size}")
-        # In future: self.screen_manager.change_screen("actual_game", self.selected_size)
+        # Generate map
+        cols, rows = self.selected_size, self.selected_size
+        cols, rows, seed, terrain_map = map_generator.generate_map(cols, rows)
+
+        # Build game state object
+        state = GameState(cols, rows, seed, terrain_map)
+
+        # Save to file
+        save_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "sav")
+        os.makedirs(save_dir, exist_ok=True)
+        filename = f"map_{cols}x{rows}_{seed}_{int(time.time())}.json"
+        filepath = os.path.join(save_dir, filename)
+        state.save(filepath)
+        print(f"Map saved to {filepath}")
+
+        # Pass state directly to renderer
+        self.screen_manager.screens["render"] = RenderGameScreen(self.screen, self.screen_manager, state)
+        self.screen_manager.change_screen("render")
 
     def back_to_main(self):
         self.screen_manager.change_screen("main_menu")
@@ -61,6 +84,7 @@ class NewGameMenu:
         pass
 
     def draw(self):
+        self.screen.fill((0, 0, 0))
         self.screen.blit(self.background, self.bg_offset)
         for button in self.buttons:
             button.draw(self.screen)
