@@ -5,14 +5,15 @@ import json
 import time
 from game.state import GameState
 from menus.pause_menu import PauseMenu
+from game.controls import CameraController
 
 
 TERRAIN_COLORS = [
-    (0, 119, 190),   
-    (169, 169, 169), 
-    (34, 139, 34),   
-    (222, 184, 135), 
-    (124, 252, 0)    
+    (0, 119, 190),
+    (169, 169, 169),
+    (34, 139, 34),
+    (222, 184, 135),
+    (124, 252, 0)
 ]
 
 BORDER_COLOR = (80, 80, 80)
@@ -60,6 +61,8 @@ class RenderGameScreen:
         self.offset_y = 0
         self.recalculate_layout()
 
+        self.camera = CameraController()
+
         self.is_paused = False
         self.pause_menu = PauseMenu(screen, self)
 
@@ -96,21 +99,28 @@ class RenderGameScreen:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             self.is_paused = True
 
+        self.camera.handle_event(event)
+
     def update(self):
         if self.is_paused:
             self.pause_menu.update()
+            return
+
+        self.camera.update(self.screen.get_size())
 
     def draw(self):
         self.screen.fill(BACKGROUND_COLOR)
+        scaled_hex_size = self.hex_size * self.camera.zoom
+
         for tile in self.terrain_map:
             col = tile['col']
             row = tile['row']
             terrain = tile['terrain']
 
-            px, py = hex_to_pixel(col, row, self.hex_size)
-            px += self.offset_x
-            py += self.offset_y
-            draw_hex(self.screen, (int(px), int(py)), TERRAIN_COLORS[terrain], self.hex_size)
+            px, py = hex_to_pixel(col, row, scaled_hex_size)
+            px += self.offset_x + self.camera.pan_x
+            py += self.offset_y + self.camera.pan_y
+            draw_hex(self.screen, (int(px), int(py)), TERRAIN_COLORS[terrain], scaled_hex_size)
 
         if self.is_paused:
             self.pause_menu.draw()
