@@ -196,3 +196,6 @@ cython_debug/
 
 ## Prevent game save file uploads
 sav/
+
+## Remove personal assets
+assets/personal/
