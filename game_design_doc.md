@@ -78,9 +78,9 @@ This is all mouse-driven for now.  Long-term I may add controller support.  If a
 | --- | ------------ | ------ |
 | 1 | ~~Complete Game Design Doc, Setup Repo & Dependencies~~ | Complete |
 | 1 | ~~Basic Repo Setup (GDD, Initial Readme + Setup Instructions)~~ | Complete |
-| 2 | ~~Build Hex-Map Generator~~, Camera Controls, Tile Rendering | In Progress |
+| 2 | ~~Build Hex-Map Generator~~, ~~Camera Controls~~, Tile Rendering | In Progress |
 | 3 | Implement Core Gameplay Loop (Resources, Building Placement, UI Bar) | Not-Started |
 | 4 | Add Worker Assignment System, Building Costs, Population Cap, UI Improvements | Not-Started |
 | 5 | Create Placeholder Art/Audio, Implement Hover Tooltips, Map Visual Polish | Not-Started |
-| 6 | Full Gameplay Test, Balancing, Bug Fixing, Menu Screens | Not-Started |
+| 6 | Full Gameplay Test, Balancing, Bug Fixing, ~~Menu Screens~~ | In-Progress |
 | 7 | Final Polish, Build Submission Package, Code Cleanup, README | Not-Started |
