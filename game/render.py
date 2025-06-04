@@ -1,6 +1,10 @@
 import pygame
 import numpy as np
+import os
+import json
+import time
 from game.state import GameState
+from menus.pause_menu import PauseMenu
 
 
 TERRAIN_COLORS = [
@@ -41,10 +45,11 @@ def draw_hex(surface, pos, color, size):
     pygame.draw.polygon(surface, BORDER_COLOR, points, 1)
 
 class RenderGameScreen:
-    def __init__(self, screen, screen_manager, game_state: GameState):
+    def __init__(self, screen, screen_manager, game_state: GameState, save_path=None):
         self.screen = screen
         self.screen_manager = screen_manager
         self.game_state = game_state
+        self.save_path = save_path
 
         self.cols = game_state.cols
         self.rows = game_state.rows
@@ -54,6 +59,9 @@ class RenderGameScreen:
         self.offset_x = 0
         self.offset_y = 0
         self.recalculate_layout()
+
+        self.is_paused = False
+        self.pause_menu = PauseMenu(screen, self)
 
     def recalculate_layout(self):
         window_width, window_height = self.screen.get_size()
@@ -79,12 +87,18 @@ class RenderGameScreen:
         self.offset_y = (window_height - total_render_height) // 2 - min_y
 
     def handle_event(self, event):
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                self.screen_manager.change_screen("main_menu")
+        if self.is_paused:
+            self.pause_menu.handle_event(event)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.is_paused = False
+            return
+
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            self.is_paused = True
 
     def update(self):
-        pass
+        if self.is_paused:
+            self.pause_menu.update()
 
     def draw(self):
         self.screen.fill(BACKGROUND_COLOR)
@@ -98,6 +112,20 @@ class RenderGameScreen:
             py += self.offset_y
             draw_hex(self.screen, (int(px), int(py)), TERRAIN_COLORS[terrain], self.hex_size)
 
+        if self.is_paused:
+            self.pause_menu.draw()
+
     def resize(self, new_screen):
         self.screen = new_screen
         self.recalculate_layout()
+        self.pause_menu.resize(new_screen)
+
+    def quick_save(self):
+        if not self.save_path:
+            save_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "sav")
+            os.makedirs(save_dir, exist_ok=True)
+            filename = f"map_{self.cols}x{self.rows}_{self.game_state.seed}_{int(time.time())}.json"
+            self.save_path = os.path.join(save_dir, filename)
+
+        self.game_state.save(self.save_path)
+        print(f"Saved to {self.save_path}")

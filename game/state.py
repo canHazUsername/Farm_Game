@@ -1,11 +1,12 @@
 import json
 
+
 class GameState:
     def __init__(self, cols, rows, seed, terrain_map):
         self.cols = cols
         self.rows = rows
         self.seed = seed
-        self.terrain_map = terrain_map  # list of dicts: {col, row, terrain}
+        self.terrain_map = terrain_map
 
     @classmethod
     def generate(cls, cols, rows, seed, terrain_map):

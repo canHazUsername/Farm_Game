@@ -13,7 +13,7 @@ class MainMenu:
         self.font = pygame.font.SysFont(None, 48)
 
         bg_path = os.path.join("assets", "main_menu", "MM_Background.png")
-        self.bg_path = bg_path  # save for rescaling later
+        self.bg_path = bg_path
         self.background, self.bg_offset = load_scaled_background(self.bg_path, screen.get_size())
 
         self.has_saves = self.check_for_saves()
@@ -48,7 +48,7 @@ class MainMenu:
             self.buttons.append(Button(rect, label, self.font, callback))
 
     def load_game(self):
-        print("Load Game selected")
+        self.screen_manager.change_screen("load_game")
 
     def new_game(self):
         self.screen_manager.change_screen("new_game")
@@ -68,7 +68,7 @@ class MainMenu:
         pass
 
     def draw(self):
-        self.screen.fill((0, 0, 0))  # <-- This clears the screen before drawing
+        self.screen.fill((0, 0, 0))
         self.screen.blit(self.background, self.bg_offset)
         for button in self.buttons:
             button.draw(self.screen)
