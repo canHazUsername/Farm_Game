@@ -1,4 +1,4 @@
-## Unnamed Farm Game
+## Quiet Acres
 
 A simple hex-tile based farm and city builder game created for [Amaiguri's June 2025 Atelier Workshop](https://itch.io/jam/amaiguris-april-2024-atelier-workshop).
 
